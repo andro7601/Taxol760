@@ -1,0 +1,23 @@
+services:
+  taxol760:
+    build: .
+    image: taxol760:latest
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATA_REDIS_HOST: redis
+      SPRING_DATA_REDIS_PORT: 6379
+      JWT_SECRET: change-this-dev-secret-key-with-at-least-32-chars
+      JWT_EXPIRATION_SECONDS: 3600
+    depends_on:
+      - redis
+
+  redis:
+    image: redis:7.2-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+
+volumes:
+  redis-data:
