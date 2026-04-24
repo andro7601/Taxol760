@@ -5,19 +5,23 @@ services:
     ports:
       - "8080:8080"
     environment:
-      SPRING_DATA_REDIS_HOST: redis
-      SPRING_DATA_REDIS_PORT: 6379
-      JWT_SECRET: change-this-dev-secret-key-with-at-least-32-chars
-      JWT_EXPIRATION_SECONDS: 3600
+      SPRING_DATASOURCE_URL: ${SPRING_DATASOURCE_URL:-jdbc:postgresql://postgres:5432/taxol760}
+      SPRING_DATASOURCE_USERNAME: ${SPRING_DATASOURCE_USERNAME:-taxol760}
+      SPRING_DATASOURCE_PASSWORD: ${SPRING_DATASOURCE_PASSWORD:-taxol760}
+      SPRING_JPA_HIBERNATE_DDL_AUTO: ${SPRING_JPA_HIBERNATE_DDL_AUTO:-update}
     depends_on:
-      - redis
+      - postgres
 
-  redis:
-    image: redis:7.2-alpine
+  postgres:
+    image: postgres:16-alpine
     ports:
-      - "6379:6379"
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-taxol760}
+      POSTGRES_USER: ${POSTGRES_USER:-taxol760}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-taxol760}
     volumes:
-      - redis-data:/data
+      - postgres-data:/var/lib/postgresql/data
 
 volumes:
-  redis-data:
+  postgres-data:
