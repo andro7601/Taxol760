@@ -6,6 +6,7 @@ import com.taxol760.database.repositories.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -14,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class UserService {
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
     public UserModel createUser(String email, String name, String password, String phoneNumber, UserRole role) {
         if (userRepository.existsByEmail(email)) {
@@ -23,7 +25,7 @@ public class UserService {
         UserModel user = new UserModel();
         user.setEmail(email);
         user.setName(name);
-        user.setPassword(password);
+        user.setPassword(passwordEncoder.encode(password));
         user.setPhoneNumber(phoneNumber);
         user.setRole(role);
 
