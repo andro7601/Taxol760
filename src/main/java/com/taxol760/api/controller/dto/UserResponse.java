@@ -1,4 +1,4 @@
-package com.taxol760.api.dto;
+package com.taxol760.api.controller.dto;
 
 import com.taxol760.database.models.user.UserModel;
 import com.taxol760.database.models.user.UserRole;

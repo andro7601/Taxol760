@@ -1,4 +1,4 @@
-package com.taxol760.config;
+package com.taxol760.security.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

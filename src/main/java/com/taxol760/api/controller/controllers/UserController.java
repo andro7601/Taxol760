@@ -1,7 +1,7 @@
-package com.taxol760.api.controllers;
+package com.taxol760.api.controller.controllers;
 
-import com.taxol760.api.dto.CreateUserRequest;
-import com.taxol760.api.dto.UserResponse;
+import com.taxol760.api.controller.dto.CreateUserRequest;
+import com.taxol760.api.controller.dto.UserResponse;
 import com.taxol760.services.UserService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;

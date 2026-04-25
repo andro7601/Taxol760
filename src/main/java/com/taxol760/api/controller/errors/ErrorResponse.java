@@ -1,4 +1,4 @@
-package com.taxol760.api.errors;
+package com.taxol760.api.controller.errors;
 
 import java.time.LocalDateTime;
 

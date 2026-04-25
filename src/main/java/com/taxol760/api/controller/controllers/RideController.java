@@ -1,7 +1,7 @@
-package com.taxol760.api.controllers;
+package com.taxol760.api.controller.controllers;
 
-import com.taxol760.api.dto.CreateRideRequest;
-import com.taxol760.api.dto.RideResponse;
+import com.taxol760.api.controller.dto.CreateRideRequest;
+import com.taxol760.api.controller.dto.RideResponse;
 import com.taxol760.database.models.ride.RideStatus;
 import com.taxol760.services.RideService;
 import java.util.List;
