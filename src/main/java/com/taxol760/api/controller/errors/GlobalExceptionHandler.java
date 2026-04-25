@@ -1,6 +1,7 @@
 package com.taxol760.api.controller.errors;
 
 import jakarta.persistence.EntityNotFoundException;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -21,5 +22,11 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleBadRequest(RuntimeException exception) {
         return ErrorResponse.of(HttpStatus.BAD_REQUEST.value(), exception.getMessage());
+    }
+
+    @ExceptionHandler(BadCredentialsException.class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    public ErrorResponse handleBadCredentials(BadCredentialsException exception) {
+        return ErrorResponse.of(HttpStatus.UNAUTHORIZED.value(), exception.getMessage());
     }
 }
