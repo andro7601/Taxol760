@@ -17,8 +17,8 @@ public class JwtService {
     private final long expirationMilliseconds;
 
     public JwtService(
-            @Value("${jwt.secret:${JWT_SECRET:taxol760-development-secret-key-change-this-value}}") String secret,
-            @Value("${jwt.expiration-ms:${JWT_EXPIRATION_MS:86400000}}") long expirationMilliseconds
+            @Value("${jwt.secret}") String secret,
+            @Value("${jwt.expiration-ms}") long expirationMilliseconds
     ) {
         this.signingKey = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
         this.expirationMilliseconds = expirationMilliseconds;
