@@ -25,7 +25,7 @@ services:
   postgres:
     image: postgres:16-alpine
     ports:
-      - "5432:5432"
+      - "${POSTGRES_PORT:-5433}:5432"
     environment:
       POSTGRES_DB: ${POSTGRES_DB:-taxol760}
       POSTGRES_USER: ${POSTGRES_USER:-taxol760}
