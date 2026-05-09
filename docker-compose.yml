@@ -1,49 +1,39 @@
 services:
   taxol760:
-    build: .
-    image: taxol760:latest
-    ports:
-      - "${SERVER_PORT:-8080}:${SERVER_PORT:-8080}"
+    image: maven:3.9.14-eclipse-temurin-17
+    env_file:
+      - .env
     environment:
-      SPRING_APPLICATION_NAME: ${SPRING_APPLICATION_NAME:-Taxol760}
-      SERVER_PORT: ${SERVER_PORT:-8080}
-      SPRING_DATASOURCE_URL: ${SPRING_DATASOURCE_URL:-jdbc:postgresql://postgres:5432/taxol760}
-      SPRING_DATASOURCE_USERNAME: ${SPRING_DATASOURCE_USERNAME:-taxol760}
-      SPRING_DATASOURCE_PASSWORD: ${SPRING_DATASOURCE_PASSWORD:-taxol760}
-      SPRING_JPA_HIBERNATE_DDL_AUTO: ${SPRING_JPA_HIBERNATE_DDL_AUTO:-update}
-      SPRING_JPA_OPEN_IN_VIEW: ${SPRING_JPA_OPEN_IN_VIEW:-false}
-      SPRING_DATA_REDIS_HOST: ${SPRING_DATA_REDIS_HOST:-redis}
-      SPRING_DATA_REDIS_PORT: ${SPRING_DATA_REDIS_PORT:-6379}
-      JWT_SECRET: ${JWT_SECRET:-taxol760-development-secret-key-change-this-value}
-      JWT_EXPIRATION_MS: ${JWT_EXPIRATION_MS:-86400000}
-    depends_on:
-      postgres:
-        condition: service_healthy
-      redis:
-        condition: service_healthy
-
-  postgres:
-    image: postgres:16-alpine
-    ports:
-      - "${POSTGRES_PORT:-5433}:5432"
-    environment:
-      POSTGRES_DB: ${POSTGRES_DB:-taxol760}
-      POSTGRES_USER: ${POSTGRES_USER:-taxol760}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-taxol760}
+      SPRING_PROFILES_ACTIVE: docker
     volumes:
-      - postgres-data:/var/lib/postgresql/data
+      - .:/app
+      - taxol760-maven-cache:/root/.m2
+    working_dir: /app
+    command: mvn spring-boot:run
+    depends_on:
+      taxol760-db:
+        condition: service_healthy
+      taxol760-redis:
+        condition: service_healthy
+    ports:
+      - "${SERVER_PORT:-8080}:8080"
+
+  taxol760-db:
+    image: postgres:16-alpine
+    env_file:
+      - .env
+    volumes:
+      - taxol760-db-data:/var/lib/postgresql/data
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
       interval: 5s
       timeout: 5s
       retries: 10
 
-  redis:
+  taxol760-redis:
     image: redis:7.2-alpine
-    ports:
-      - "6379:6379"
     volumes:
-      - redis-data:/data
+      - taxol760-redis-data:/data
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
       interval: 5s
@@ -51,5 +41,6 @@ services:
       retries: 10
 
 volumes:
-  postgres-data:
-  redis-data:
+  taxol760-db-data:
+  taxol760-redis-data:
+  taxol760-maven-cache:
