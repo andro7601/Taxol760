@@ -1,0 +1,26 @@
+@userId = 1
+@role = USER
+
+### Create user
+POST {{host}}/api/users
+Content-Type: application/json
+
+{
+  "email": "user1@taxol.test",
+  "name": "User 1",
+  "password": "password123",
+  "phoneNumber": "5550001",
+  "role": "USER"
+}
+
+### Get all users
+GET {{host}}/api/users
+
+### Get user by id
+GET {{host}}/api/users/{{userId}}
+
+### Get users by role
+GET {{host}}/api/users/role/{{role}}
+
+### Delete user
+DELETE {{host}}/api/users/{{userId}}
