@@ -12,6 +12,18 @@
 @rideDriverId = 10
 @rideStatus = REQUESTED
 
+### Create user
+POST {{host}}/api/admin/users
+Content-Type: application/json
+
+{
+  "email": "user1@taxol.test",
+  "name": "User 1",
+  "password": "password123",
+  "phoneNumber": "5550001",
+  "role": "USER"
+}
+
 ### Get all users
 GET {{host}}/api/admin/users
 

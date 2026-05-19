@@ -13,15 +13,3 @@ Content-Type: application/json
   "color": "White",
   "plateNumber": "{{plateNumber}}"
 }
-
-### Get all vehicles
-GET {{host}}/api/vehicles
-
-### Get vehicle by id
-GET {{host}}/api/vehicles/{{vehicleId}}
-
-### Get vehicle by driver id
-GET {{host}}/api/vehicles/driver/{{vehicleDriverId}}
-
-### Get vehicle by plate number
-GET {{host}}/api/vehicles/plate/{{plateNumber}}

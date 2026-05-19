@@ -8,6 +8,7 @@ import com.taxol760.database.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,11 +30,12 @@ public class DriverService {
         DriverModel driver = new DriverModel();
         driver.setUser(user);
         driver.setLicenseNumber(licenseNumber);
-        driver.setStatus(DriverStatus.PENDING);
+        driver.setStatus(DriverStatus.APPROVED);
 
         return driverRepository.save(driver);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     public DriverModel updateDriverStatus(Long id, DriverStatus status) {
         DriverModel driver = getDriver(id);
         driver.setStatus(status);

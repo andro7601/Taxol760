@@ -1,7 +1,6 @@
 @driverId = 10
 @driverUserId = 1
 @licenseNumber = LIC-10
-@driverStatus = APPROVED
 
 ### Create driver
 POST {{host}}/api/drivers
@@ -10,27 +9,4 @@ Content-Type: application/json
 {
   "userId": {{driverUserId}},
   "licenseNumber": "{{licenseNumber}}"
-}
-
-### Get all drivers
-GET {{host}}/api/drivers
-
-### Get driver by id
-GET {{host}}/api/drivers/{{driverId}}
-
-### Get driver by user id
-GET {{host}}/api/drivers/user/{{driverUserId}}
-
-### Get driver by license number
-GET {{host}}/api/drivers/license/{{licenseNumber}}
-
-### Get drivers by status
-GET {{host}}/api/drivers/status/{{driverStatus}}
-
-### Update driver status
-PATCH {{host}}/api/drivers/{{driverId}}/status
-Content-Type: application/json
-
-{
-  "status": "{{driverStatus}}"
 }

@@ -6,6 +6,7 @@ import com.taxol760.database.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,6 +18,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
+    @PreAuthorize("hasRole('ADMIN')")
     public UserModel createUser(String email, String name, String password, String phoneNumber, UserRole role) {
         if (userRepository.existsByEmail(email)) {
             throw new IllegalArgumentException("Email is already in use");
@@ -33,6 +35,7 @@ public class UserService {
     }
 
     @Transactional(readOnly = true)
+    @PreAuthorize("hasRole('ADMIN') or @resourceAccess.isCurrentUser(#id)")
     public UserModel getUser(Long id) {
         return userRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("User not found"));
@@ -45,15 +48,18 @@ public class UserService {
     }
 
     @Transactional(readOnly = true)
+    @PreAuthorize("hasRole('ADMIN')")
     public List<UserModel> getUsersByRole(UserRole role) {
         return userRepository.findByRole(role);
     }
 
     @Transactional(readOnly = true)
+    @PreAuthorize("hasRole('ADMIN')")
     public List<UserModel> getAllUsers() {
         return userRepository.findAll();
     }
 
+    @PreAuthorize("hasRole('ADMIN') or @resourceAccess.isCurrentUser(#id)")
     public void deleteUser(Long id) {
         if (!userRepository.existsById(id)) {
             throw new EntityNotFoundException("User not found");
