@@ -2,7 +2,7 @@ package com.taxol760.api.admin;
 
 import com.taxol760.api.drivers.dto.DriverResponse;
 import com.taxol760.api.drivers.dto.UpdateDriverStatusRequest;
-import com.taxol760.database.model.driver.DriverStatus;
+import com.taxol760.databaseANDcache.model.driver.DriverStatus;
 import com.taxol760.service.driver.DriverService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;

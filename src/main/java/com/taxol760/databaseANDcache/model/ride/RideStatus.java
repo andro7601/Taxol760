@@ -1,4 +1,4 @@
-package com.taxol760.database.model.ride;
+package com.taxol760.databaseANDcache.model.ride;
 
 public enum RideStatus {
     REQUESTED,

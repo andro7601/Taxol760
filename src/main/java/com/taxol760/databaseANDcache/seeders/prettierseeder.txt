@@ -1,0 +1,61 @@
+Taxol760 development seed data
+
+This file is intentionally plain English so the seeded accounts are easy to read.
+
+Passwords are written unhashed here. The Java seeder hashes them before saving to the database.
+
+Admin
+- Email: seed.admin@taxol.test
+- Name: Seed Admin
+- Password: admin123
+- Phone: 5559001
+- Role: ADMIN
+
+Users
+- Email: seed.user1@taxol.test
+- Name: Seed User One
+- Password: user123
+- Phone: 5551001
+- Role: USER
+
+- Email: seed.user2@taxol.test
+- Name: Seed User Two
+- Password: user123
+- Phone: 5551002
+- Role: USER
+
+Drivers
+- Email: seed.driver1@taxol.test
+- Name: Seed Driver One
+- Password: driver123
+- Phone: 5552001
+- Role: DRIVER
+- License: SEED-LIC-001
+- Driver status: APPROVED
+- Vehicle: Toyota Prius
+- Vehicle color: White
+- Plate number: TAX-20
+
+- Email: seed.driver2@taxol.test
+- Name: Seed Driver Two
+- Password: driver123
+- Phone: 5552002
+- Role: DRIVER
+- License: SEED-LIC-002
+- Driver status: APPROVED
+- Vehicle: Toyota Prius
+- Vehicle color: White
+- Plate number: TAX-21
+
+- Email: seed.driver3@taxol.test
+- Name: Seed Driver Three
+- Password: driver123
+- Phone: 5552003
+- Role: DRIVER
+- License: SEED-LIC-003
+- Driver status: APPROVED
+- Vehicle: Toyota Prius
+- Vehicle color: White
+- Plate number: TAX-22
+
+It also prints JWTs for these accounts when the app starts.

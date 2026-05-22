@@ -1,7 +1,7 @@
 package com.taxol760.service.auth;
 
-import com.taxol760.database.model.user.UserModel;
-import com.taxol760.database.repository.UserRepository;
+import com.taxol760.databaseANDcache.model.user.UserModel;
+import com.taxol760.databaseANDcache.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;

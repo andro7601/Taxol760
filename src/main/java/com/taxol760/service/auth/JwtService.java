@@ -1,6 +1,6 @@
 package com.taxol760.service.auth;
 
-import com.taxol760.database.model.user.UserModel;
+import com.taxol760.databaseANDcache.model.user.UserModel;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
@@ -26,14 +26,20 @@ public class JwtService {
 
     public String generateToken(UserModel user) {
         Date issuedAt = new Date();
-        Date expiresAt = new Date(issuedAt.getTime() + expirationMilliseconds);
+        Date expiresAt = expirationMilliseconds <= 0
+                ? null
+                : new Date(issuedAt.getTime() + expirationMilliseconds);
 
-        return Jwts.builder()
+        var builder = Jwts.builder()
                 .subject(user.getId().toString())
                 .issuedAt(issuedAt)
-                .expiration(expiresAt)
-                .signWith(signingKey)
-                .compact();
+                .signWith(signingKey);
+
+        if (expiresAt != null) {
+            builder.expiration(expiresAt);
+        }
+
+        return builder.compact();
     }
 
     public Long extractUserId(String token) {
@@ -53,7 +59,8 @@ public class JwtService {
     public boolean isTokenValid(String token) {
         try {
             Claims claims = extractClaims(token);
-            return claims.getSubject() != null && claims.getExpiration().after(new Date());
+            return claims.getSubject() != null
+                    && (claims.getExpiration() == null || claims.getExpiration().after(new Date()));
         } catch (JwtException | IllegalArgumentException exception) {
             return false;
         }

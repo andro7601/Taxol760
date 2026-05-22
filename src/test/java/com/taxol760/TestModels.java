@@ -1,12 +1,12 @@
 package com.taxol760;
 
-import com.taxol760.database.model.driver.DriverModel;
-import com.taxol760.database.model.driver.DriverStatus;
-import com.taxol760.database.model.ride.RideModel;
-import com.taxol760.database.model.ride.RideStatus;
-import com.taxol760.database.model.user.UserModel;
-import com.taxol760.database.model.user.UserRole;
-import com.taxol760.database.model.vehicle.VehicleModel;
+import com.taxol760.databaseANDcache.model.driver.DriverModel;
+import com.taxol760.databaseANDcache.model.driver.DriverStatus;
+import com.taxol760.databaseANDcache.model.ride.RideModel;
+import com.taxol760.databaseANDcache.model.ride.RideStatus;
+import com.taxol760.databaseANDcache.model.user.UserModel;
+import com.taxol760.databaseANDcache.model.user.UserRole;
+import com.taxol760.databaseANDcache.model.vehicle.VehicleModel;
 import java.time.LocalDateTime;
 
 public final class TestModels {

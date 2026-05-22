@@ -1,6 +1,6 @@
 package com.taxol760.api.users.dto;
 
-import com.taxol760.database.model.user.UserRole;
+import com.taxol760.databaseANDcache.model.user.UserRole;
 
 public record CreateUserRequest(
         String email,

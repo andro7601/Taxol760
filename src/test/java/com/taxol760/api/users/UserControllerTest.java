@@ -11,7 +11,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.taxol760.api.ControllerTestBase;
-import com.taxol760.database.model.user.UserRole;
+import com.taxol760.databaseANDcache.model.user.UserRole;
 import com.taxol760.service.user.UserService;
 import java.util.List;
 import org.junit.jupiter.api.Test;

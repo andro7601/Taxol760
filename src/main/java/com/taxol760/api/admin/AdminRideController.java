@@ -1,7 +1,7 @@
 package com.taxol760.api.admin;
 
 import com.taxol760.api.rides.dto.RideResponse;
-import com.taxol760.database.model.ride.RideStatus;
+import com.taxol760.databaseANDcache.model.ride.RideStatus;
 import com.taxol760.service.ride.RideService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;

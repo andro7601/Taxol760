@@ -2,8 +2,8 @@ package com.taxol760.middleware;
 
 import com.taxol760.service.auth.AuthUserDetailsService;
 import com.taxol760.service.auth.JwtService;
-import com.taxol760.database.model.user.UserModel;
-import com.taxol760.database.repository.UserRepository;
+import com.taxol760.databaseANDcache.model.user.UserModel;
+import com.taxol760.databaseANDcache.repository.UserRepository;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

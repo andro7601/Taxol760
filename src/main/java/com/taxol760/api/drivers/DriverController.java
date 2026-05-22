@@ -2,21 +2,16 @@ package com.taxol760.api.drivers;
 
 import com.taxol760.api.drivers.dto.CreateDriverRequest;
 import com.taxol760.api.drivers.dto.DriverResponse;
+import com.taxol760.api.drivers.dto.UpdateDriverLocationRequest;
 import com.taxol760.api.drivers.dto.UpdateDriverStatusRequest;
-import com.taxol760.database.model.driver.DriverStatus;
 import com.taxol760.service.driver.DriverService;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/drivers")
@@ -35,6 +30,7 @@ public class DriverController {
     }
 
     @GetMapping("/{id}")
+    @Cacheable(value = "drivers", key = "#id")
     public DriverResponse getDriver(@PathVariable Long id) {
         return DriverResponse.from(driverService.getDriver(id));
     }
@@ -50,11 +46,40 @@ public class DriverController {
     }
 
     @PatchMapping("/{id}/status")
-
     public DriverResponse updateDriverStatus(
             @PathVariable Long id,
             @RequestBody UpdateDriverStatusRequest request
     ) {
         return DriverResponse.from(driverService.updateDriverStatus(id, request.status()));
+    }
+
+    @PutMapping("/{id}/online")
+    public void goOnline(@PathVariable int id) {
+        driverService.goOnline(id);
+    }
+
+    @PutMapping("/{id}/offline")
+    public void goOffline(@PathVariable int id) {
+        driverService.goOffline(id);
+    }
+
+    @PutMapping("/{id}/location")
+    public UpdateDriverLocationRequest updateLocation(
+            @PathVariable int id,
+            @RequestBody UpdateDriverLocationRequest request
+    ) {
+        driverService.updateLocation(id, request.longitude(), request.latitude());
+        return request;
+    }
+
+    @GetMapping("/suggestions")
+    public List<DriverResponse> suggestions(
+            @RequestParam double longitude,
+            @RequestParam double latitude
+    ) {
+       return driverService.suggestedDrivers(longitude, latitude)
+               .stream()
+               .map(DriverResponse::from)
+               .toList();
     }
 }

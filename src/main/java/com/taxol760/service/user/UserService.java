@@ -1,8 +1,8 @@
 package com.taxol760.service.user;
 
-import com.taxol760.database.model.user.UserModel;
-import com.taxol760.database.model.user.UserRole;
-import com.taxol760.database.repository.UserRepository;
+import com.taxol760.databaseANDcache.model.user.UserModel;
+import com.taxol760.databaseANDcache.model.user.UserRole;
+import com.taxol760.databaseANDcache.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import java.util.List;
 import lombok.RequiredArgsConstructor;

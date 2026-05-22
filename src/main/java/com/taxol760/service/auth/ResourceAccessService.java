@@ -1,13 +1,13 @@
 package com.taxol760.service.auth;
 
-import com.taxol760.database.model.driver.DriverModel;
-import com.taxol760.database.model.ride.RideModel;
-import com.taxol760.database.model.user.UserModel;
-import com.taxol760.database.model.vehicle.VehicleModel;
-import com.taxol760.database.repository.DriverRepository;
-import com.taxol760.database.repository.RideRepository;
-import com.taxol760.database.repository.UserRepository;
-import com.taxol760.database.repository.VehicleRepository;
+import com.taxol760.databaseANDcache.model.driver.DriverModel;
+import com.taxol760.databaseANDcache.model.ride.RideModel;
+import com.taxol760.databaseANDcache.model.user.UserModel;
+import com.taxol760.databaseANDcache.model.vehicle.VehicleModel;
+import com.taxol760.databaseANDcache.repository.DriverRepository;
+import com.taxol760.databaseANDcache.repository.RideRepository;
+import com.taxol760.databaseANDcache.repository.UserRepository;
+import com.taxol760.databaseANDcache.repository.VehicleRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;

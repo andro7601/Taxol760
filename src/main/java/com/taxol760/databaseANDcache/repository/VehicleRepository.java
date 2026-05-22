@@ -1,7 +1,7 @@
-package com.taxol760.database.repository;
+package com.taxol760.databaseANDcache.repository;
 
-import com.taxol760.database.model.driver.DriverModel;
-import com.taxol760.database.model.vehicle.VehicleModel;
+import com.taxol760.databaseANDcache.model.driver.DriverModel;
+import com.taxol760.databaseANDcache.model.vehicle.VehicleModel;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 

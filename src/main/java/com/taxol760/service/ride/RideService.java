@@ -1,14 +1,14 @@
 package com.taxol760.service.ride;
 
-import com.taxol760.database.model.driver.DriverModel;
-import com.taxol760.database.model.ride.RideModel;
-import com.taxol760.database.model.ride.RideStatus;
-import com.taxol760.database.model.user.UserModel;
-import com.taxol760.database.model.vehicle.VehicleModel;
-import com.taxol760.database.repository.DriverRepository;
-import com.taxol760.database.repository.RideRepository;
-import com.taxol760.database.repository.UserRepository;
-import com.taxol760.database.repository.VehicleRepository;
+import com.taxol760.databaseANDcache.model.driver.DriverModel;
+import com.taxol760.databaseANDcache.model.ride.RideModel;
+import com.taxol760.databaseANDcache.model.ride.RideStatus;
+import com.taxol760.databaseANDcache.model.user.UserModel;
+import com.taxol760.databaseANDcache.model.vehicle.VehicleModel;
+import com.taxol760.databaseANDcache.repository.DriverRepository;
+import com.taxol760.databaseANDcache.repository.RideRepository;
+import com.taxol760.databaseANDcache.repository.UserRepository;
+import com.taxol760.databaseANDcache.repository.VehicleRepository;
 import jakarta.persistence.EntityNotFoundException;
 import java.time.LocalDateTime;
 import java.util.List;

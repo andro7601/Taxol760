@@ -11,8 +11,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.taxol760.api.ControllerTestBase;
-import com.taxol760.database.model.driver.DriverStatus;
-import com.taxol760.database.model.user.UserRole;
+import com.taxol760.databaseANDcache.cache.cacheservice;
+import com.taxol760.databaseANDcache.model.driver.DriverStatus;
+import com.taxol760.databaseANDcache.model.user.UserRole;
+import com.taxol760.databaseANDcache.repository.DriverRepository;
 import com.taxol760.service.driver.DriverService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +32,12 @@ class DriverControllerTest extends ControllerTestBase {
 
     @MockBean
     private DriverService driverService;
+
+    @MockBean
+    private cacheservice cacheservice;
+
+    @MockBean
+    private DriverRepository driverRepository;
 
     @Test
     void createDriverReturnsCreatedDriver() throws Exception {

@@ -1,4 +1,6 @@
-package com.taxol760.database.model.user;
+package com.taxol760.databaseANDcache.model.driver;
+
+import com.taxol760.databaseANDcache.model.user.UserModel;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -7,34 +9,32 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "users")
+@Table(name = "drivers")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserModel {
+public class DriverModel {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @OneToOne
+    @JoinColumn(name = "user_id", nullable = false, unique = true)
+    private UserModel user;
+
     @Column(nullable = false, unique = true)
-    private String email;
-
-    @Column(nullable = false)
-    private String name;
-
-    @Column(nullable = false)
-    private String password;
-
-    private String phoneNumber;
+    private String licenseNumber;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private UserRole role;
+    private DriverStatus status;
 }

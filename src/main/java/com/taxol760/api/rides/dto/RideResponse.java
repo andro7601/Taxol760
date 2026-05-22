@@ -1,7 +1,7 @@
 package com.taxol760.api.rides.dto;
 
-import com.taxol760.database.model.ride.RideModel;
-import com.taxol760.database.model.ride.RideStatus;
+import com.taxol760.databaseANDcache.model.ride.RideModel;
+import com.taxol760.databaseANDcache.model.ride.RideStatus;
 import java.time.LocalDateTime;
 
 public record RideResponse(

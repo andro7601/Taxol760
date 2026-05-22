@@ -1,7 +1,7 @@
-package com.taxol760.database.repository;
+package com.taxol760.databaseANDcache.repository;
 
-import com.taxol760.database.model.user.UserModel;
-import com.taxol760.database.model.user.UserRole;
+import com.taxol760.databaseANDcache.model.user.UserModel;
+import com.taxol760.databaseANDcache.model.user.UserRole;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;

@@ -2,7 +2,7 @@ package com.taxol760.api.admin;
 
 import com.taxol760.api.users.dto.CreateUserRequest;
 import com.taxol760.api.users.dto.UserResponse;
-import com.taxol760.database.model.user.UserRole;
+import com.taxol760.databaseANDcache.model.user.UserRole;
 import com.taxol760.service.user.UserService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;

@@ -13,13 +13,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.taxol760.api.ControllerTestBase;
-import com.taxol760.database.model.driver.DriverModel;
-import com.taxol760.database.model.driver.DriverStatus;
-import com.taxol760.database.model.ride.RideModel;
-import com.taxol760.database.model.ride.RideStatus;
-import com.taxol760.database.model.user.UserModel;
-import com.taxol760.database.model.user.UserRole;
-import com.taxol760.database.model.vehicle.VehicleModel;
+import com.taxol760.databaseANDcache.model.driver.DriverModel;
+import com.taxol760.databaseANDcache.model.driver.DriverStatus;
+import com.taxol760.databaseANDcache.model.ride.RideModel;
+import com.taxol760.databaseANDcache.model.ride.RideStatus;
+import com.taxol760.databaseANDcache.model.user.UserModel;
+import com.taxol760.databaseANDcache.model.user.UserRole;
+import com.taxol760.databaseANDcache.model.vehicle.VehicleModel;
 import com.taxol760.service.ride.RideService;
 import java.util.List;
 import org.junit.jupiter.api.Test;
