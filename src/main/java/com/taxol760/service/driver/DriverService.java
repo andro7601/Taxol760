@@ -5,9 +5,11 @@ import com.taxol760.databaseANDcache.cache.cacheservice;
 import com.taxol760.databaseANDcache.model.driver.DriverModel;
 import com.taxol760.databaseANDcache.model.driver.DriverStatus;
 import com.taxol760.databaseANDcache.model.user.UserModel;
+import com.taxol760.databaseANDcache.model.vehicle.VehicleModel;
 import com.taxol760.databaseANDcache.repository.DriverRepository;
 import com.taxol760.databaseANDcache.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
+import com.taxol760.databaseANDcache.repository.VehicleRepository;
 
 import java.util.List;
 
@@ -23,6 +25,7 @@ public class DriverService {
     private final DriverRepository driverRepository;
     private final UserRepository userRepository;
     private final cacheservice cacheservice;
+    private final VehicleRepository vehicleRepository;
 
     public DriverModel createDriver(Long userId, String licenseNumber) {
         if (driverRepository.existsByLicenseNumber(licenseNumber)) {
@@ -45,7 +48,8 @@ public class DriverService {
         DriverModel driver = getDriver(id);
         driver.setStatus(status);
         DriverModel savedDriver = driverRepository.save(driver);
-        cacheservice.refreshDriverInfo(CachedDriverInfo.from(savedDriver));
+        VehicleModel vehicle = getVehicle(savedDriver);
+        cacheservice.refreshDriverInfo(CachedDriverInfo.from(savedDriver, vehicle));
         return savedDriver;
     }
 
@@ -88,7 +92,8 @@ public class DriverService {
     @Transactional(readOnly = true)
     public void goOnline(int id) {
         DriverModel driver = getDriver((long) id);
-        cacheservice.addDriver(CachedDriverInfo.from(driver), 70, 67);
+        VehicleModel vehicle = getVehicle(driver);
+        cacheservice.addDriver(CachedDriverInfo.from(driver, vehicle), 70, 67);
     }
 
     public void goOffline(int id) {
@@ -98,7 +103,9 @@ public class DriverService {
     public void updateLocation(int id, double lon, double lat) {
         CachedDriverInfo driverInfo = cacheservice.getCachedDriverInfo(id);
         if (driverInfo == null) {
-            driverInfo = CachedDriverInfo.from(getDriver((long) id));
+            DriverModel driver = getDriver((long) id);
+            VehicleModel vehicle = getVehicle(driver);
+            driverInfo = CachedDriverInfo.from(driver, vehicle);
         }
 
         cacheservice.updateDriver(driverInfo, lon, lat);
@@ -111,5 +118,10 @@ public class DriverService {
             throw new EntityNotFoundException("Drivers not found");
         }
         return suggestedDrivers;
+    }
+
+    private VehicleModel getVehicle(DriverModel driver) {
+        return vehicleRepository.findByDriver(driver)
+                .orElseThrow(() -> new EntityNotFoundException("Vehicle not found for driver " + driver.getId()));
     }
 }
