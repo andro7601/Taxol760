@@ -17,6 +17,8 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.socket.TextMessage;
+import com.taxol760.service.WebSocket.WebSocketHandler;
 
 @Service
 @RequiredArgsConstructor
@@ -26,10 +28,12 @@ public class RideService {
     private final UserRepository userRepository;
     private final DriverRepository driverRepository;
     private final VehicleRepository vehicleRepository;
+    private final WebSocketHandler handler;
 
     @PreAuthorize("hasRole('ADMIN') or @resourceAccess.isCurrentUser(#riderId)")
     public RideModel requestRide(
             Long riderId,
+            Long driveruserId,
             Double pickupLatitude,
             Double pickupLongitude,
             Double dropoffLatitude,
@@ -46,8 +50,16 @@ public class RideService {
         ride.setDropoffLongitude(dropoffLongitude);
         ride.setStatus(RideStatus.REQUESTED);
         ride.setCreatedAt(LocalDateTime.now());
+        DriverModel driver = driverRepository.findByUser_Id(driveruserId)
+                .orElseThrow(() -> new EntityNotFoundException("Driver not found"));
+        ride.setDriver(driver);
 
-        return rideRepository.save(ride);
+        VehicleModel vehicle = vehicleRepository.findByDriver(driver)
+                .orElseThrow(() -> new EntityNotFoundException("Vehicle not found"));
+        ride.setVehicle(vehicle);
+        RideModel savedRide=rideRepository.save(ride);
+        handler.notifyDriverOfRide(driveruserId,ride);
+        return savedRide;
     }
 
     @PreAuthorize("hasRole('ADMIN') or @resourceAccess.isCurrentDriver(#driverId)")
@@ -99,7 +111,7 @@ public class RideService {
         }
 
         ride.setStatus(RideStatus.CANCELLED);
-
+        handler.notifyRiderOfReject(ride.getDriver().getUser().getId().intValue(),ride);
         return rideRepository.save(ride);
     }
 

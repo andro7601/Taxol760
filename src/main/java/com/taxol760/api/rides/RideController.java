@@ -27,6 +27,7 @@ public class RideController {
     public RideResponse requestRide(@RequestBody CreateRideRequest request) {
         return RideResponse.from(rideService.requestRide(
                 request.riderId(),
+                request.driverUserId(),
                 request.pickupLatitude(),
                 request.pickupLongitude(),
                 request.dropoffLatitude(),

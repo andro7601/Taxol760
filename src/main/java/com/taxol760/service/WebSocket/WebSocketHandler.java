@@ -1,13 +1,11 @@
     package com.taxol760.service.WebSocket;
     import com.fasterxml.jackson.databind.JsonNode;
     import com.fasterxml.jackson.databind.ObjectMapper;
-    import com.taxol760.service.auth.CurrentUserService;
+    import com.taxol760.databaseANDcache.model.ride.RideModel;
     import com.taxol760.service.auth.JwtService;
     import com.taxol760.service.driver.DriverService;
     import com.taxol760.service.ride.RideService;
     import lombok.RequiredArgsConstructor;
-    import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-    import org.springframework.security.core.authority.SimpleGrantedAuthority;
     import org.springframework.security.core.context.SecurityContextHolder;
     import org.springframework.stereotype.Component;
     import org.springframework.web.socket.CloseStatus;
@@ -15,7 +13,6 @@
     import org.springframework.web.socket.WebSocketSession;
     import org.springframework.web.socket.handler.TextWebSocketHandler;
 
-    import java.util.List;
     import java.util.Map;
     import java.util.concurrent.ConcurrentHashMap;
 
@@ -26,7 +23,6 @@
         private final Map<Integer, WebSocketSession> sessions = new ConcurrentHashMap<>();
         private final ObjectMapper objectMapper;
         private final DriverService driverService;
-        private final RideService rideService;
         private final JwtService jwtService;
 
         @Override
@@ -43,6 +39,7 @@
         public void afterConnectionClosed(WebSocketSession session,
                                           CloseStatus status) {
             int id =(int) session.getAttributes().get("userId");
+            System.out.println("went into session driver: id");
             sessions.remove(id);
         }
 
@@ -70,11 +67,43 @@
             }
         }
 
-        public void notifyDriver(int driverId, Object rideRequest) throws Exception {
-            WebSocketSession session = sessions.get(driverId);
-            if (session != null && session.isOpen()) {
-                String json = objectMapper.writeValueAsString(rideRequest);
-                session.sendMessage(new TextMessage(json));
+        public void notifyDriverOfRide(Long driverUserId, RideModel ride) {
+            System.out.println("notifyDriverOfRide called with driverUserId: " + driverUserId);
+            System.out.println("ride id: " + ride.getId());
+            System.out.println("sessions: " + sessions.keySet());
+            try {
+                WebSocketSession session = sessions.get(driverUserId.intValue());
+                if (session != null && session.isOpen()) {
+                    Map<String, Object> payload = Map.of(
+                            "type", "RIDE_REQUEST",
+                            "rideId", ride.getId(),
+                            "pickupLat", ride.getPickupLatitude(),
+                            "pickupLon", ride.getPickupLongitude(),
+                            "dropoffLat", ride.getDropoffLatitude(),
+                            "dropoffLon", ride.getDropoffLongitude()
+                    );
+                    session.sendMessage(new TextMessage(objectMapper.writeValueAsString(payload)));
+                } else {
+                    System.out.println("No session found for driverUserId: " + driverUserId);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        public void notifyRiderOfReject(int driderUserId, RideModel ride) {
+            try {
+                WebSocketSession session = sessions.get(driderUserId);
+                if (session != null && session.isOpen()) {
+                    Map<String, Object> payload = Map.of(
+                            "type", "RIDE_ACCEPTED",
+                            "rideId", ride.getId(),
+                            "driverId", ride.getDriver().getId()
+                    );
+                    session.sendMessage(new TextMessage(objectMapper.writeValueAsString(payload)));
+                }
+            } catch (Exception e) {
+                System.out.println("Failed to notify rider: " + e.getMessage());
             }
         }
     }
