@@ -36,6 +36,15 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String authHeader = request.getHeader(AUTHORIZATION_HEADER);
 
         if (authHeader == null || !authHeader.startsWith(BEARER_PREFIX)) {
+            String paramToken = request.getParameter("token");  // checks ?token=JWT
+            if (paramToken != null) {
+                if (jwtService.isTokenValid(paramToken)) {
+                    Long userId = jwtService.extractUserId(paramToken);
+                    authenticateUserFromToken(userId, request);
+                }
+                filterChain.doFilter(request, response);
+                return;
+            }
             filterChain.doFilter(request, response);
             return;
         }
@@ -46,6 +55,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
 
         String token = authHeader.substring(BEARER_PREFIX.length());
+
         if (jwtService.isTokenValid(token)) {
             Long userId = jwtService.extractUserId(token);
             authenticateUserFromToken(userId, request);

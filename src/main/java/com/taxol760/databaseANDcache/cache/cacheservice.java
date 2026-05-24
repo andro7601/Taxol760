@@ -20,7 +20,6 @@ public class cacheservice {
 
     private final RedisTemplate<String, Object> redisTemplate;
 
-    @PreAuthorize("hasRole('ADMIN') or @resourceAccess.isCurrentDriver(#id)")
     public void addDriver(int id) {
         redisTemplate.opsForGeo().add(Redis_Geo,new Point(70,67),id);
     }
@@ -62,12 +61,11 @@ public class cacheservice {
                 .toList();
     }
 
-    @PreAuthorize("@resourceAccess.isCurrentDriver(#id) or hasRole('ADMIN')")
+
     public void updateDriver(int id, double lon, double lat) {
         redisTemplate.opsForGeo().add(Redis_Geo,new Point(lon, lat),id);
     }
 
-    @PreAuthorize("@resourceAccess.isCurrentDriver(#driverInfo.id()) or hasRole('ADMIN')")
     public void updateDriver(CachedDriverInfo driverInfo, double lon, double lat) {
         redisTemplate.opsForGeo().add(Redis_Geo, new Point(lon, lat), driverInfo.id().intValue());
         setDriverInfo(driverInfo);

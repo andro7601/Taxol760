@@ -27,6 +27,7 @@ public class DriverService {
     private final cacheservice cacheservice;
     private final VehicleRepository vehicleRepository;
 
+
     public DriverModel createDriver(Long userId, String licenseNumber) {
         if (driverRepository.existsByLicenseNumber(licenseNumber)) {
             throw new IllegalArgumentException("License number is already in use");
@@ -100,7 +101,8 @@ public class DriverService {
         cacheservice.delDriver(id);
     }
 
-    public void updateLocation(int id, double lon, double lat) {
+    public void updateLocation(int userid, double lon, double lat) {
+        int id =getDriverByUserId(Long.valueOf(userid)).getId().intValue();
         CachedDriverInfo driverInfo = cacheservice.getCachedDriverInfo(id);
         if (driverInfo == null) {
             DriverModel driver = getDriver((long) id);

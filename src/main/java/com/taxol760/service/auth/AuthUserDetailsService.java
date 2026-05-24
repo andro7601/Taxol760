@@ -31,6 +31,7 @@ public class AuthUserDetailsService implements UserDetailsService {
 
     public UserDetails buildUserDetails(UserModel user) {
         return User.builder()
+
                 .username(user.getEmail())
                 .password(user.getPassword())
                 .authorities("ROLE_" + user.getRole().name())
