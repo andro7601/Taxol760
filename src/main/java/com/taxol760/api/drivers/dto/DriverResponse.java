@@ -16,7 +16,17 @@ public record DriverResponse(
         String vehiclePlateNumber
 ) {
     public static DriverResponse from(DriverModel driver) {
-        return from(driver, null);
+        VehicleModel vehicle = driver.getVehicle();
+        return new DriverResponse(
+                driver.getId(),
+                driver.getUser().getId(),
+                driver.getLicenseNumber(),
+                driver.getStatus(),
+                vehicle != null ? vehicle.getBrand() : null,
+                vehicle != null ? vehicle.getModel() : null,
+                vehicle != null ? vehicle.getColor() : null,
+                vehicle != null ? vehicle.getPlateNumber() : null
+        );
     }
 
     public static DriverResponse from(DriverModel driver, VehicleModel vehicle) {

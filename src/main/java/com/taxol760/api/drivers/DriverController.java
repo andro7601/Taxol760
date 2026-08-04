@@ -7,8 +7,10 @@ import com.taxol760.api.drivers.dto.UpdateDriverStatusRequest;
 import com.taxol760.service.auth.CurrentUserService;
 import com.taxol760.service.driver.DriverService;
 import lombok.RequiredArgsConstructor;
+import org.apache.coyote.Response;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -54,33 +56,34 @@ public class DriverController {
         return DriverResponse.from(driverService.updateDriverStatus(id, request.status()));
     }
 
-    @PutMapping("/{id}/online")
-    public void goOnline(@PathVariable int id) {
-        driverService.goOnline(id);
+    @PutMapping("/me/online")
+    public ResponseEntity goOnline() {
+        Long userId = currentUserService.getCurrentUserId();
+        int driverId = driverService.getDriverByUserId(userId).getId().intValue();
+        driverService.goOnline(driverId);
+        return ResponseEntity.ok().build();
     }
 
-    @PutMapping("/{id}/offline")
-    public void goOffline(@PathVariable int id) {
-        driverService.goOffline(id);
-    }
 
-    @PutMapping("/{id}/location")
-    public UpdateDriverLocationRequest updateLocation(
-            @PathVariable int id,
+    @PutMapping("/me/location")
+    public void updateLocation(
             @RequestBody UpdateDriverLocationRequest request
     ) {
-        driverService.updateLocation(id, request.longitude(), request.latitude());
-        return request;
+        Long userId = currentUserService.getCurrentUserId();
+        int driverId = driverService.getDriverByUserId(userId).getId().intValue();
+        driverService.updateLocation(driverId, request.longitude(), request.latitude());
     }
 
     @GetMapping("/suggestions")
-    public List<DriverResponse> suggestions(
+    public ResponseEntity<List<DriverResponse>> suggestions(
             @RequestParam double longitude,
             @RequestParam double latitude
     ) {
-       return driverService.suggestedDrivers(longitude, latitude)
-               .stream()
-               .map(DriverResponse::from)
-               .toList();
+        return ResponseEntity.ok(
+                driverService.suggestedDrivers(longitude, latitude)
+                        .stream()
+                        .map(DriverResponse::from)
+                        .toList()
+        );
     }
 }

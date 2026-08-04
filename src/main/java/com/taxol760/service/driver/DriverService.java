@@ -119,8 +119,8 @@ public class DriverService {
         cacheservice.delDriver(id);
     }
 
-    public void updateLocation(int userid, double lon, double lat) {
-        int id =getDriverByUserId(Long.valueOf(userid)).getId().intValue();
+    public void updateLocation(int driverId, double lon, double lat) {
+        int id = driverId;
         CachedDriverInfo driverInfo = cacheservice.getCachedDriverInfo(id);
         if (driverInfo == null) {
             DriverModel driver = getDriver((long) id);
