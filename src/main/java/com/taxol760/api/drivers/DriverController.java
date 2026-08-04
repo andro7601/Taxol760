@@ -11,7 +11,6 @@ import org.apache.coyote.Response;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -43,7 +42,6 @@ public class DriverController {
     }
 
     @GetMapping("/{id}")
-    @Cacheable(value = "drivers", key = "#id")
     public DriverResponse getDriver(@PathVariable Long id) {
         return DriverResponse.from(driverService.getDriver(id));
     }

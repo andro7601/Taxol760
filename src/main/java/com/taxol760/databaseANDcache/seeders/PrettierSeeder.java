@@ -21,7 +21,6 @@ import org.springframework.transaction.annotation.Transactional;
 public class PrettierSeeder implements CommandLineRunner {
     private static final String USER_PASSWORD = "user123";
     private static final String DRIVER_PASSWORD = "driver123";
-    private static final String ADMIN_PASSWORD = "admin123";
 
     private final UserRepository userRepository;
     private final DriverRepository driverRepository;
@@ -37,7 +36,6 @@ public class PrettierSeeder implements CommandLineRunner {
         UserModel driverOne = seedUser("seed.driver1@taxol.test", "Seed Driver One", DRIVER_PASSWORD, "5552001", UserRole.DRIVER);
         UserModel driverTwo = seedUser("seed.driver2@taxol.test", "Seed Driver Two", DRIVER_PASSWORD, "5552002", UserRole.DRIVER);
         UserModel driverThree = seedUser("seed.driver3@taxol.test", "Seed Driver Three", DRIVER_PASSWORD, "5552003", UserRole.DRIVER);
-        UserModel admin = seedUser("seed.admin@taxol.test", "Seed Admin", ADMIN_PASSWORD, "5559001", UserRole.ADMIN);
 
         DriverModel seededDriverOne = seedDriver(driverOne, "SEED-LIC-001");
         DriverModel seededDriverTwo = seedDriver(driverTwo, "SEED-LIC-002");
@@ -47,7 +45,7 @@ public class PrettierSeeder implements CommandLineRunner {
         seedVehicle(seededDriverTwo, "Toyota", "Prius", "White", "TAX-21");
         seedVehicle(seededDriverThree, "Toyota", "Prius", "White", "TAX-22");
 
-        printSeededAccounts(List.of(userOne, userTwo, driverOne, driverTwo, driverThree, admin));
+        printSeededAccounts(List.of(userOne, userTwo, driverOne, driverTwo, driverThree));
     }
 
     private UserModel seedUser(String email, String name, String plainPassword, String phoneNumber, UserRole role) {
@@ -94,7 +92,6 @@ public class PrettierSeeder implements CommandLineRunner {
         System.out.println("Plain passwords:");
         System.out.println("users: " + USER_PASSWORD);
         System.out.println("drivers: " + DRIVER_PASSWORD);
-        System.out.println("admin: " + ADMIN_PASSWORD);
         System.out.println();
         System.out.println("JWTs:");
         users.forEach(user -> System.out.println(user.getRole() + " " + user.getEmail() + " = " + jwtService.generateToken(user)));

@@ -15,7 +15,6 @@ import com.taxol760.databaseANDcache.repository.VehicleRepository;
 import java.util.List;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -62,7 +61,6 @@ public class DriverService {
         return savedDriver;
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
     public DriverModel updateDriverStatus(Long id, DriverStatus status) {
         DriverModel driver = getDriver(id);
         driver.setStatus(status);

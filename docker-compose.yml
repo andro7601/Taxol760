@@ -1,5 +1,6 @@
 services:
   taxol760:
+    container_name: taxol760-app
     build: .
     env_file:
       - .env
@@ -12,6 +13,7 @@ services:
       - "${SERVER_PORT:-8080}:8080"
 
   taxol760-db:
+    container_name: taxol760-db
     image: postgres:16-alpine
     env_file:
       - .env
@@ -26,6 +28,7 @@ services:
       retries: 10
 
   taxol760-redis:
+    container_name: taxol760-redis
     image: redis:7.2-alpine
     volumes:
       - taxol760-redis-data:/data

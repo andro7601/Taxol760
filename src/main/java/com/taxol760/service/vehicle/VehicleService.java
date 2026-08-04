@@ -7,7 +7,6 @@ import com.taxol760.databaseANDcache.repository.VehicleRepository;
 import jakarta.persistence.EntityNotFoundException;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,7 +17,6 @@ public class VehicleService {
     private final VehicleRepository vehicleRepository;
     private final DriverRepository driverRepository;
 
-    @PreAuthorize("hasRole('ADMIN') or @resourceAccess.isCurrentDriver(#driverId)")
     public VehicleModel createVehicle(
             Long driverId,
             String brand,
@@ -44,7 +42,6 @@ public class VehicleService {
     }
 
     @Transactional(readOnly = true)
-    @PreAuthorize("hasRole('ADMIN') or @resourceAccess.canAccessVehicle(#id)")
     public VehicleModel getVehicle(Long id) {
         return vehicleRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Vehicle not found"));
@@ -57,7 +54,6 @@ public class VehicleService {
     }
 
     @Transactional(readOnly = true)
-    @PreAuthorize("hasRole('ADMIN') or @resourceAccess.isCurrentDriver(#driverId)")
     public VehicleModel getVehicleByDriverId(Long driverId) {
         DriverModel driver = driverRepository.findById(driverId)
                 .orElseThrow(() -> new EntityNotFoundException("Driver not found"));
@@ -66,14 +62,12 @@ public class VehicleService {
     }
 
     @Transactional(readOnly = true)
-    @PreAuthorize("hasRole('ADMIN')")
     public VehicleModel getVehicleByPlateNumber(String plateNumber) {
         return vehicleRepository.findByPlateNumber(plateNumber)
                 .orElseThrow(() -> new EntityNotFoundException("Vehicle not found"));
     }
 
     @Transactional(readOnly = true)
-    @PreAuthorize("hasRole('ADMIN')")
     public List<VehicleModel> getAllVehicles() {
         return vehicleRepository.findAll();
     }

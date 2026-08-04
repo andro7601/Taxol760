@@ -9,12 +9,13 @@ import com.taxol760.databaseANDcache.repository.DriverRepository;
 import com.taxol760.databaseANDcache.repository.RideRepository;
 import com.taxol760.databaseANDcache.repository.UserRepository;
 import com.taxol760.databaseANDcache.repository.VehicleRepository;
+import com.taxol760.databaseANDcache.cache.cacheservice;
+import com.taxol760.service.auth.CurrentUserService;
 import jakarta.persistence.EntityNotFoundException;
 import java.time.LocalDateTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.AccessDeniedException;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.socket.TextMessage;
@@ -29,6 +30,8 @@ public class RideService {
     private final DriverRepository driverRepository;
     private final VehicleRepository vehicleRepository;
     private final WebSocketHandler handler;
+    private final CurrentUserService currentUserService;
+    private final cacheservice cacheservice;
 
     @Transactional(readOnly = true)
     public Long getDriverIdByUserId(Long userId) {
@@ -37,15 +40,14 @@ public class RideService {
                 .getId();
     }
 
-    @PreAuthorize("hasRole('ADMIN') or @resourceAccess.isCurrentUser(#riderId)")
     public RideModel requestRide(
-            Long riderId,
-            Long driveruserId,
+            Long driverId,
             Double pickupLatitude,
             Double pickupLongitude,
             Double dropoffLatitude,
             Double dropoffLongitude
     ) {
+        long riderId=currentUserService.getCurrentUserId();
         UserModel rider = userRepository.findById(riderId)
                 .orElseThrow(() -> new EntityNotFoundException("Rider not found"));
 
@@ -57,22 +59,27 @@ public class RideService {
         ride.setDropoffLongitude(dropoffLongitude);
         ride.setStatus(RideStatus.REQUESTED);
         ride.setCreatedAt(LocalDateTime.now());
-        DriverModel driver = driverRepository.findByUser_Id(driveruserId)
+        DriverModel driver = driverRepository.findById(driverId)
                 .orElseThrow(() -> new EntityNotFoundException("Driver not found"));
         ride.setDriver(driver);
 
         VehicleModel vehicle = vehicleRepository.findByDriver(driver)
                 .orElseThrow(() -> new EntityNotFoundException("Vehicle not found"));
         ride.setVehicle(vehicle);
-        RideModel savedRide=rideRepository.save(ride);
-        handler.notifyDriverOfRide(driveruserId,ride);
+        RideModel savedRide = rideRepository.save(ride);
+        
+        Long driverUserId = driver.getUser().getId();
+        handler.notifyDriverOfRide(driverUserId, savedRide);
         return savedRide;
     }
 
-    @PreAuthorize("hasRole('ADMIN') or @resourceAccess.isCurrentDriver(#driverId)")
-    public RideModel acceptRide(Long rideId, Long driverId) {
+    public RideModel acceptRide(Long rideId) {
+        Long userId = currentUserService.getCurrentUserId();
+        Long driverId = getDriverIdByUserId(userId);
+        
         RideModel ride = getRide(rideId);
         requireStatus(ride, RideStatus.REQUESTED);
+        ensureCurrentUserIsAssignedDriver(ride);
 
         DriverModel driver = driverRepository.findById(driverId)
                 .orElseThrow(() -> new EntityNotFoundException("Driver not found"));
@@ -84,14 +91,16 @@ public class RideService {
         ride.setDriver(driver);
         ride.setVehicle(vehicle);
         ride.setStatus(RideStatus.ACCEPTED);
+        
+        cacheservice.setDriverOccupied(driverId.intValue());
 
         return rideRepository.save(ride);
     }
 
-    @PreAuthorize("hasRole('ADMIN') or @resourceAccess.isAssignedDriverForRide(#rideId)")
     public RideModel startRide(Long rideId) {
         RideModel ride = getRide(rideId);
         requireStatus(ride, RideStatus.ACCEPTED);
+        ensureCurrentUserIsAssignedDriver(ride);
 
         ride.setStatus(RideStatus.IN_PROGRESS);
         ride.setStartedAt(LocalDateTime.now());
@@ -99,34 +108,41 @@ public class RideService {
         return rideRepository.save(ride);
     }
 
-    @PreAuthorize("hasRole('ADMIN') or @resourceAccess.isAssignedDriverForRide(#rideId)")
     public RideModel completeRide(Long rideId) {
         RideModel ride = getRide(rideId);
         requireStatus(ride, RideStatus.IN_PROGRESS);
+        ensureCurrentUserIsAssignedDriver(ride);
 
         ride.setStatus(RideStatus.COMPLETED);
         ride.setFinishedAt(LocalDateTime.now());
+        
+        cacheservice.setDriverFree(ride.getDriver().getId().intValue());
 
         return rideRepository.save(ride);
     }
 
-    @PreAuthorize("hasRole('ADMIN') or @resourceAccess.canAccessRide(#rideId)")
     public RideModel cancelRide(Long rideId) {
         RideModel ride = getRide(rideId);
+        ensureCurrentUserCanAccessRide(ride);
+        
         if (ride.getStatus() == RideStatus.COMPLETED) {
             throw new IllegalStateException("Completed rides cannot be cancelled");
         }
 
         ride.setStatus(RideStatus.CANCELLED);
         handler.notifyRiderOfReject(ride.getDriver().getUser().getId().intValue(),ride);
+        
+        cacheservice.setDriverFree(ride.getDriver().getId().intValue());
+        
         return rideRepository.save(ride);
     }
 
     @Transactional(readOnly = true)
-    @PreAuthorize("hasRole('ADMIN') or @resourceAccess.canAccessRide(#id)")
     public RideModel getRide(Long id) {
-        return rideRepository.findById(id)
+        RideModel ride = rideRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Ride not found"));
+        ensureCurrentUserCanAccessRide(ride);
+        return ride;
     }
 
     @Transactional(readOnly = true)
@@ -135,7 +151,6 @@ public class RideService {
     }
 
     @Transactional(readOnly = true)
-    @PreAuthorize("hasRole('ADMIN') or @resourceAccess.isCurrentUser(#riderId)")
     public List<RideModel> getRidesByRiderId(Long riderId) {
         UserModel rider = userRepository.findById(riderId)
                 .orElseThrow(() -> new EntityNotFoundException("Rider not found"));
@@ -144,13 +159,11 @@ public class RideService {
     }
 
     @Transactional(readOnly = true)
-    @PreAuthorize("hasRole('ADMIN')")
     public List<RideModel> getRidesByDriver(DriverModel driver) {
         return rideRepository.findByDriver(driver);
     }
 
     @Transactional(readOnly = true)
-    @PreAuthorize("hasRole('ADMIN') or @resourceAccess.isCurrentDriver(#driverId)")
     public List<RideModel> getRidesByDriverId(Long driverId) {
         DriverModel driver = driverRepository.findById(driverId)
                 .orElseThrow(() -> new EntityNotFoundException("Driver not found"));
@@ -159,13 +172,25 @@ public class RideService {
     }
 
     @Transactional(readOnly = true)
-    @PreAuthorize("hasRole('ADMIN')")
+    public RideModel getActiveRideForDriver(Long driverId) {
+        DriverModel driver = driverRepository.findById(driverId).orElse(null);
+        if (driver == null) return null;
+        
+        List<RideModel> accepted = rideRepository.findByDriverAndStatus(driver, RideStatus.ACCEPTED);
+        if (!accepted.isEmpty()) return accepted.get(0);
+        
+        List<RideModel> inProgress = rideRepository.findByDriverAndStatus(driver, RideStatus.IN_PROGRESS);
+        if (!inProgress.isEmpty()) return inProgress.get(0);
+        
+        return null;
+    }
+
+    @Transactional(readOnly = true)
     public List<RideModel> getRidesByStatus(RideStatus status) {
         return rideRepository.findByStatus(status);
     }
 
     @Transactional(readOnly = true)
-    @PreAuthorize("hasRole('ADMIN')")
     public List<RideModel> getAllRides() {
         return rideRepository.findAll();
     }
@@ -178,7 +203,24 @@ public class RideService {
 
     private void ensureDriverIsNotRider(RideModel ride, DriverModel driver) {
         if (ride.getRider().getId().equals(driver.getUser().getId())) {
-            throw new AccessDeniedException("Driver cannot accept their own ride request");
+            throw new IllegalStateException("Driver cannot accept their own ride request");
+        }
+    }
+
+    private void ensureCurrentUserIsAssignedDriver(RideModel ride) {
+        Long currentUserId = currentUserService.getCurrentUserId();
+        if (ride.getDriver() == null || !ride.getDriver().getUser().getId().equals(currentUserId)) {
+            throw new AccessDeniedException("You are not the assigned driver for this ride");
+        }
+    }
+
+    private void ensureCurrentUserCanAccessRide(RideModel ride) {
+        Long currentUserId = currentUserService.getCurrentUserId();
+        boolean isRider = ride.getRider().getId().equals(currentUserId);
+        boolean isDriver = ride.getDriver() != null && ride.getDriver().getUser().getId().equals(currentUserId);
+        
+        if (!isRider && !isDriver) {
+            throw new AccessDeniedException("You do not have access to this ride");
         }
     }
 }

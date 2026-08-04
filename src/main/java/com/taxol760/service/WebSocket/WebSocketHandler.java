@@ -25,6 +25,10 @@
         private final DriverService driverService;
         private final JwtService jwtService;
 
+        @org.springframework.context.annotation.Lazy
+        @org.springframework.beans.factory.annotation.Autowired
+        private RideService rideService;
+
         @Override
         public void afterConnectionEstablished(WebSocketSession session) throws Exception {
             String query = session.getUri().getQuery(); // "token=eyJhbG..."
@@ -56,10 +60,28 @@
         protected void handleLocation(WebSocketSession session, JsonNode json) {
             try {
                 int userId = (int) session.getAttributes().get("userId");
-                driverService.updateLocation(userId,
-                        json.get("longitude").asDouble(),
-                        json.get("latitude").asDouble());
+                Long driverId = driverService.getDriverByUserId((long) userId).getId();
+                
+                double lon = json.get("longitude").asDouble();
+                double lat = json.get("latitude").asDouble();
+                
+                driverService.updateLocation(driverId.intValue(), lon, lat);
 
+                // Broadcast location to rider if in an active ride
+                RideModel activeRide = rideService.getActiveRideForDriver(driverId);
+                if (activeRide != null) {
+                    Long riderUserId = activeRide.getRider().getId();
+                    WebSocketSession riderSession = sessions.get(riderUserId.intValue());
+                    if (riderSession != null && riderSession.isOpen()) {
+                        Map<String, Object> payload = Map.of(
+                                "type", "DRIVER_LOCATION",
+                                "rideId", activeRide.getId(),
+                                "longitude", lon,
+                                "latitude", lat
+                        );
+                        riderSession.sendMessage(new TextMessage(objectMapper.writeValueAsString(payload)));
+                    }
+                }
             } catch (Exception e) {
                 System.out.println("Error: " + e.getMessage());
             } finally {

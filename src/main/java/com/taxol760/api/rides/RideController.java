@@ -19,9 +19,9 @@ public class RideController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public RideResponse requestRide(@RequestBody CreateRideRequest request) {
+        Long riderId = currentUserService.getCurrentUserId();
         return RideResponse.from(rideService.requestRide(
-                request.riderId(),
-                request.driverUserId(),
+                request.driverId(),
                 request.pickupLatitude(),
                 request.pickupLongitude(),
                 request.dropoffLatitude(),
@@ -52,8 +52,8 @@ public class RideController {
     }
 
     @PostMapping("/{id}/accept")
-    public RideResponse acceptRide(@PathVariable Long id, @RequestParam Long driverId) {
-        return RideResponse.from(rideService.acceptRide(id, driverId));
+    public RideResponse acceptRide(@PathVariable Long id) {
+        return RideResponse.from(rideService.acceptRide(id));
     }
 
     @PostMapping("/{id}/start")
