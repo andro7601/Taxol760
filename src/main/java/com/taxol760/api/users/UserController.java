@@ -2,6 +2,7 @@ package com.taxol760.api.users;
 
 import com.taxol760.api.users.dto.UserResponse;
 import com.taxol760.databaseANDcache.model.user.UserRole;
+import com.taxol760.service.auth.CurrentUserService;
 import com.taxol760.service.user.UserService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +19,12 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class UserController {
     private final UserService userService;
+    private final CurrentUserService currentUserService;
+
+    @GetMapping("/me")
+    public UserResponse getCurrentUser() {
+        return UserResponse.from(currentUserService.getCurrentUser());
+    }
 
     @GetMapping("/{id}")
     public UserResponse getUser(@PathVariable Long id) {
