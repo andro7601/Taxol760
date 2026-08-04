@@ -1,13 +1,8 @@
 services:
   taxol760:
-    image: maven:3.9.14-eclipse-temurin-17
+    build: .
     env_file:
       - .env
-    volumes:
-      - .:/app
-      - taxol760-maven-cache:/root/.m2
-    working_dir: /app
-    command: mvn spring-boot:run
     depends_on:
       taxol760-db:
         condition: service_healthy
