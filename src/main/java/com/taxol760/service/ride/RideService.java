@@ -30,6 +30,13 @@ public class RideService {
     private final VehicleRepository vehicleRepository;
     private final WebSocketHandler handler;
 
+    @Transactional(readOnly = true)
+    public Long getDriverIdByUserId(Long userId) {
+        return driverRepository.findByUser_Id(userId)
+                .orElseThrow(() -> new EntityNotFoundException("Driver not found for user"))
+                .getId();
+    }
+
     @PreAuthorize("hasRole('ADMIN') or @resourceAccess.isCurrentUser(#riderId)")
     public RideModel requestRide(
             Long riderId,

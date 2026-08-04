@@ -5,6 +5,7 @@ import com.taxol760.databaseANDcache.cache.cacheservice;
 import com.taxol760.databaseANDcache.model.driver.DriverModel;
 import com.taxol760.databaseANDcache.model.driver.DriverStatus;
 import com.taxol760.databaseANDcache.model.user.UserModel;
+import com.taxol760.databaseANDcache.model.user.UserRole;
 import com.taxol760.databaseANDcache.model.vehicle.VehicleModel;
 import com.taxol760.databaseANDcache.repository.DriverRepository;
 import com.taxol760.databaseANDcache.repository.UserRepository;
@@ -28,20 +29,37 @@ public class DriverService {
     private final VehicleRepository vehicleRepository;
 
 
-    public DriverModel createDriver(Long userId, String licenseNumber) {
+    public DriverModel createAndUpgradeToDriver(Long userId, String licenseNumber,
+            String brand, String model, String color, String plateNumber) {
+
         if (driverRepository.existsByLicenseNumber(licenseNumber)) {
             throw new IllegalArgumentException("License number is already in use");
+        }
+        if (vehicleRepository.existsByPlateNumber(plateNumber)) {
+            throw new IllegalArgumentException("Plate number is already in use");
         }
 
         UserModel user = userRepository.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException("User not found"));
 
+        user.setRole(UserRole.DRIVER);
+        userRepository.save(user);
+
         DriverModel driver = new DriverModel();
         driver.setUser(user);
         driver.setLicenseNumber(licenseNumber);
         driver.setStatus(DriverStatus.APPROVED);
+        DriverModel savedDriver = driverRepository.save(driver);
 
-        return driverRepository.save(driver);
+        VehicleModel vehicle = new VehicleModel();
+        vehicle.setDriver(savedDriver);
+        vehicle.setBrand(brand);
+        vehicle.setModel(model);
+        vehicle.setColor(color);
+        vehicle.setPlateNumber(plateNumber);
+        vehicleRepository.save(vehicle);
+
+        return savedDriver;
     }
 
     @PreAuthorize("hasRole('ADMIN')")

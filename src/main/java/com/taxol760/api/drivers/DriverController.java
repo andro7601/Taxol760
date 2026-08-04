@@ -4,6 +4,7 @@ import com.taxol760.api.drivers.dto.CreateDriverRequest;
 import com.taxol760.api.drivers.dto.DriverResponse;
 import com.taxol760.api.drivers.dto.UpdateDriverLocationRequest;
 import com.taxol760.api.drivers.dto.UpdateDriverStatusRequest;
+import com.taxol760.service.auth.CurrentUserService;
 import com.taxol760.service.driver.DriverService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.Cacheable;
@@ -18,31 +19,31 @@ import java.util.List;
 @RequiredArgsConstructor
 public class DriverController {
     private final DriverService driverService;
+    private final CurrentUserService currentUserService;
 
-    @PostMapping
+    @PostMapping("/me")
     @ResponseStatus(HttpStatus.CREATED)
-    @PreAuthorize("hasRole('ADMIN') or @resourceAccess.isCurrentUser(#request.userId())")
-    public DriverResponse createDriver(@RequestBody CreateDriverRequest request) {
-        return DriverResponse.from(driverService.createDriver(
-                request.userId(),
-                request.licenseNumber()
+    public DriverResponse createDriverForCurrentUser(@RequestBody CreateDriverRequest request) {
+        Long userId = currentUserService.getCurrentUserId();
+        return DriverResponse.from(driverService.createAndUpgradeToDriver(
+                userId,
+                request.licenseNumber(),
+                request.vehicleBrand(),
+                request.vehicleModel(),
+                request.vehicleColor(),
+                request.vehiclePlateNumber()
         ));
+    }
+
+    @GetMapping("/me")
+    public DriverResponse getDriverForCurrentUser() {
+        return DriverResponse.from(driverService.getDriverByUserId(currentUserService.getCurrentUserId()));
     }
 
     @GetMapping("/{id}")
     @Cacheable(value = "drivers", key = "#id")
     public DriverResponse getDriver(@PathVariable Long id) {
         return DriverResponse.from(driverService.getDriver(id));
-    }
-
-    @GetMapping("/user/{userId}")
-    public DriverResponse getDriverByUser(@PathVariable Long userId) {
-        return DriverResponse.from(driverService.getDriverByUserId(userId));
-    }
-
-    @GetMapping("/license/{licenseNumber}")
-    public DriverResponse getDriverByLicenseNumber(@PathVariable String licenseNumber) {
-        return DriverResponse.from(driverService.getDriverByLicenseNumber(licenseNumber));
     }
 
     @PatchMapping("/{id}/status")

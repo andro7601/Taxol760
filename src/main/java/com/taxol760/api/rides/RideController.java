@@ -2,25 +2,19 @@ package com.taxol760.api.rides;
 
 import com.taxol760.api.rides.dto.CreateRideRequest;
 import com.taxol760.api.rides.dto.RideResponse;
-import com.taxol760.databaseANDcache.model.ride.RideStatus;
+import com.taxol760.service.auth.CurrentUserService;
 import com.taxol760.service.ride.RideService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/rides")
 @RequiredArgsConstructor
 public class RideController {
     private final RideService rideService;
+    private final CurrentUserService currentUserService;
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
@@ -40,29 +34,18 @@ public class RideController {
         return RideResponse.from(rideService.getRide(id));
     }
 
-    @GetMapping
-    public List<RideResponse> getRides() {
-        return rideService.getAllRides().stream()
+    @GetMapping("/me")
+    public List<RideResponse> getMyRidesAsRider() {
+        Long userId = currentUserService.getCurrentUserId();
+        return rideService.getRidesByRiderId(userId).stream()
                 .map(RideResponse::from)
                 .toList();
     }
 
-    @GetMapping("/status/{status}")
-    public List<RideResponse> getRidesByStatus(@PathVariable RideStatus status) {
-        return rideService.getRidesByStatus(status).stream()
-                .map(RideResponse::from)
-                .toList();
-    }
-
-    @GetMapping("/rider/{riderId}")
-    public List<RideResponse> getRidesByRider(@PathVariable Long riderId) {
-        return rideService.getRidesByRiderId(riderId).stream()
-                .map(RideResponse::from)
-                .toList();
-    }
-
-    @GetMapping("/driver/{driverId}")
-    public List<RideResponse> getRidesByDriver(@PathVariable Long driverId) {
+    @GetMapping("/me/driver")
+    public List<RideResponse> getMyRidesAsDriver() {
+        Long userId = currentUserService.getCurrentUserId();
+        Long driverId = rideService.getDriverIdByUserId(userId);
         return rideService.getRidesByDriverId(driverId).stream()
                 .map(RideResponse::from)
                 .toList();

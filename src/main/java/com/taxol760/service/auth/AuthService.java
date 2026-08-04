@@ -59,16 +59,12 @@ public class AuthService {
         user.setName(request.name());
         user.setPassword(passwordEncoder.encode(request.password()));
         user.setPhoneNumber(request.phoneNumber());
-        user.setRole(resolveRole(request.role()));
+        user.setRole(UserRole.USER);
 
         return userRepository.save(user);
     }
 
     public TokenResponse createTokenResponse(UserModel user) {
         return new TokenResponse(jwtService.generateToken(user));
-    }
-
-    public UserRole resolveRole(UserRole role) {
-        return role == null ? UserRole.USER : role;
     }
 }
