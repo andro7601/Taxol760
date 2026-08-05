@@ -1,6 +1,6 @@
-package com.taxol760.databaseANDcache.model.vehicle;
+package com.taxol760.store.model.vehicle;
 
-import com.taxol760.databaseANDcache.model.driver.DriverModel;
+import com.taxol760.store.model.driver.DriverModel;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

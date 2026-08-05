@@ -1,7 +1,7 @@
-package com.taxol760.databaseANDcache.model.ride;
+package com.taxol760.store.model.ride;
 
-import com.taxol760.databaseANDcache.model.driver.DriverModel;
-import com.taxol760.databaseANDcache.model.user.UserModel;
+import com.taxol760.store.model.driver.DriverModel;
+import com.taxol760.store.model.user.UserModel;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -17,7 +17,7 @@ import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import com.taxol760.databaseANDcache.model.vehicle.VehicleModel;
+import com.taxol760.store.model.vehicle.VehicleModel;
 
 @Entity
 @Table(name = "rides")

@@ -1,9 +1,9 @@
-package com.taxol760.databaseANDcache.repository;
+package com.taxol760.store.repository;
 
-import com.taxol760.databaseANDcache.model.driver.DriverModel;
-import com.taxol760.databaseANDcache.model.ride.RideModel;
-import com.taxol760.databaseANDcache.model.ride.RideStatus;
-import com.taxol760.databaseANDcache.model.user.UserModel;
+import com.taxol760.store.model.driver.DriverModel;
+import com.taxol760.store.model.ride.RideModel;
+import com.taxol760.store.model.ride.RideStatus;
+import com.taxol760.store.model.user.UserModel;
 import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 

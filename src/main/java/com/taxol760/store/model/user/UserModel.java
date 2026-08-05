@@ -1,4 +1,4 @@
-package com.taxol760.databaseANDcache.model.user;
+package com.taxol760.store.model.user;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

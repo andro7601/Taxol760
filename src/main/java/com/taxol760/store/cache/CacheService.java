@@ -1,4 +1,4 @@
-package com.taxol760.databaseANDcache.cache;
+package com.taxol760.store.cache;
 
 import com.taxol760.service.auth.CurrentUserService;
 import lombok.RequiredArgsConstructor;
@@ -13,8 +13,8 @@ import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
-public class cacheservice {
-    private final String Redis_Geo ="Geo";
+public class CacheService {
+    private static final String REDIS_GEO_KEY = "Geo";
     private final String OCCUPIED_DRIVERS_SET = "occupied-drivers";
     private static final String DRIVER_INFO_KEY_PREFIX = "live-driver:";
     private static final Duration LIVE_DRIVER_TTL = Duration.ofMinutes(2);
@@ -23,16 +23,16 @@ public class cacheservice {
     private final CurrentUserService currentUserService;
 
     public void addDriver(int id) {
-        redisTemplate.opsForGeo().add(Redis_Geo,new Point(70,67),id);
+        redisTemplate.opsForGeo().add(REDIS_GEO_KEY,new Point(70,67),id);
     }
 
     public void addDriver(CachedDriverInfo driverInfo, double lon, double lat) {
-        redisTemplate.opsForGeo().add(Redis_Geo, new Point(lon, lat), driverInfo.id().intValue());
+        redisTemplate.opsForGeo().add(REDIS_GEO_KEY, new Point(lon, lat), driverInfo.id().intValue());
         setDriverInfo(driverInfo);
     }
 
     public void delDriver(int id) {
-        redisTemplate.opsForGeo().remove(Redis_Geo,id);
+        redisTemplate.opsForGeo().remove(REDIS_GEO_KEY,id);
         redisTemplate.delete(driverInfoKey(id));
     }
 
@@ -44,7 +44,7 @@ public class cacheservice {
                 .sortAscending()
                 .limit(20);
 
-        var geoResults = redisTemplate.opsForGeo().radius(Redis_Geo, searchArea, args);
+        var geoResults = redisTemplate.opsForGeo().radius(REDIS_GEO_KEY, searchArea, args);
 
         if (geoResults == null) return List.of();
 
@@ -77,7 +77,7 @@ public class cacheservice {
     }
 
     public void updateDriver(CachedDriverInfo driverInfo, double lon, double lat) {
-        redisTemplate.opsForGeo().add(Redis_Geo, new Point(lon, lat), driverInfo.id().intValue());
+        redisTemplate.opsForGeo().add(REDIS_GEO_KEY, new Point(lon, lat), driverInfo.id().intValue());
         setDriverInfo(driverInfo);
     }
 
@@ -108,7 +108,7 @@ public class cacheservice {
             return driverInfo;
         }
 
-        redisTemplate.opsForGeo().remove(Redis_Geo, id);
+        redisTemplate.opsForGeo().remove(REDIS_GEO_KEY, id);
         return null;
     }
 

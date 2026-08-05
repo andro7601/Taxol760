@@ -1,7 +1,7 @@
     package com.taxol760.service.WebSocket;
     import com.fasterxml.jackson.databind.JsonNode;
     import com.fasterxml.jackson.databind.ObjectMapper;
-    import com.taxol760.databaseANDcache.model.ride.RideModel;
+    import com.taxol760.store.model.ride.RideModel;
     import com.taxol760.service.auth.JwtService;
     import com.taxol760.service.driver.DriverService;
     import com.taxol760.service.ride.RideService;

@@ -1,15 +1,15 @@
 package com.taxol760.service.ride;
 
-import com.taxol760.databaseANDcache.model.driver.DriverModel;
-import com.taxol760.databaseANDcache.model.ride.RideModel;
-import com.taxol760.databaseANDcache.model.ride.RideStatus;
-import com.taxol760.databaseANDcache.model.user.UserModel;
-import com.taxol760.databaseANDcache.model.vehicle.VehicleModel;
-import com.taxol760.databaseANDcache.repository.DriverRepository;
-import com.taxol760.databaseANDcache.repository.RideRepository;
-import com.taxol760.databaseANDcache.repository.UserRepository;
-import com.taxol760.databaseANDcache.repository.VehicleRepository;
-import com.taxol760.databaseANDcache.cache.cacheservice;
+import com.taxol760.store.model.driver.DriverModel;
+import com.taxol760.store.model.ride.RideModel;
+import com.taxol760.store.model.ride.RideStatus;
+import com.taxol760.store.model.user.UserModel;
+import com.taxol760.store.model.vehicle.VehicleModel;
+import com.taxol760.store.repository.DriverRepository;
+import com.taxol760.store.repository.RideRepository;
+import com.taxol760.store.repository.UserRepository;
+import com.taxol760.store.repository.VehicleRepository;
+import com.taxol760.store.cache.CacheService;
 import com.taxol760.service.auth.CurrentUserService;
 import jakarta.persistence.EntityNotFoundException;
 import java.time.LocalDateTime;
@@ -31,7 +31,7 @@ public class RideService {
     private final VehicleRepository vehicleRepository;
     private final WebSocketHandler handler;
     private final CurrentUserService currentUserService;
-    private final cacheservice cacheservice;
+    private final CacheService cacheService;
 
     @Transactional(readOnly = true)
     public Long getDriverIdByUserId(Long userId) {
@@ -92,7 +92,7 @@ public class RideService {
         ride.setVehicle(vehicle);
         ride.setStatus(RideStatus.ACCEPTED);
         
-        cacheservice.setDriverOccupied(driverId.intValue());
+        cacheService.setDriverOccupied(driverId.intValue());
 
         return rideRepository.save(ride);
     }
@@ -116,7 +116,7 @@ public class RideService {
         ride.setStatus(RideStatus.COMPLETED);
         ride.setFinishedAt(LocalDateTime.now());
         
-        cacheservice.setDriverFree(ride.getDriver().getId().intValue());
+        cacheService.setDriverFree(ride.getDriver().getId().intValue());
 
         return rideRepository.save(ride);
     }
@@ -132,7 +132,7 @@ public class RideService {
         ride.setStatus(RideStatus.CANCELLED);
         handler.notifyRiderOfReject(ride.getDriver().getUser().getId().intValue(),ride);
         
-        cacheservice.setDriverFree(ride.getDriver().getId().intValue());
+        cacheService.setDriverFree(ride.getDriver().getId().intValue());
         
         return rideRepository.save(ride);
     }

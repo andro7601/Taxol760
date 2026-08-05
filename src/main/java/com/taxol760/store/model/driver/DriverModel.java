@@ -1,7 +1,7 @@
-package com.taxol760.databaseANDcache.model.driver;
+package com.taxol760.store.model.driver;
 
-import com.taxol760.databaseANDcache.model.user.UserModel;
-import com.taxol760.databaseANDcache.model.vehicle.VehicleModel;
+import com.taxol760.store.model.user.UserModel;
+import com.taxol760.store.model.vehicle.VehicleModel;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

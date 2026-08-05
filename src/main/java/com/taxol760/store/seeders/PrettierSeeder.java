@@ -1,13 +1,13 @@
-package com.taxol760.databaseANDcache.seeders;
+package com.taxol760.store.seeders;
 
-import com.taxol760.databaseANDcache.model.driver.DriverModel;
-import com.taxol760.databaseANDcache.model.driver.DriverStatus;
-import com.taxol760.databaseANDcache.model.user.UserModel;
-import com.taxol760.databaseANDcache.model.user.UserRole;
-import com.taxol760.databaseANDcache.model.vehicle.VehicleModel;
-import com.taxol760.databaseANDcache.repository.DriverRepository;
-import com.taxol760.databaseANDcache.repository.UserRepository;
-import com.taxol760.databaseANDcache.repository.VehicleRepository;
+import com.taxol760.store.model.driver.DriverModel;
+import com.taxol760.store.model.driver.DriverStatus;
+import com.taxol760.store.model.user.UserModel;
+import com.taxol760.store.model.user.UserRole;
+import com.taxol760.store.model.vehicle.VehicleModel;
+import com.taxol760.store.repository.DriverRepository;
+import com.taxol760.store.repository.UserRepository;
+import com.taxol760.store.repository.VehicleRepository;
 import com.taxol760.service.auth.JwtService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;

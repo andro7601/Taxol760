@@ -1,6 +1,6 @@
 package com.taxol760.service.auth;
 
-import com.taxol760.databaseANDcache.model.user.UserModel;
+import com.taxol760.store.model.user.UserModel;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;

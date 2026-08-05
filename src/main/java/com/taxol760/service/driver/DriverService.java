@@ -1,16 +1,16 @@
 package com.taxol760.service.driver;
 
-import com.taxol760.databaseANDcache.cache.CachedDriverInfo;
-import com.taxol760.databaseANDcache.cache.cacheservice;
-import com.taxol760.databaseANDcache.model.driver.DriverModel;
-import com.taxol760.databaseANDcache.model.driver.DriverStatus;
-import com.taxol760.databaseANDcache.model.user.UserModel;
-import com.taxol760.databaseANDcache.model.user.UserRole;
-import com.taxol760.databaseANDcache.model.vehicle.VehicleModel;
-import com.taxol760.databaseANDcache.repository.DriverRepository;
-import com.taxol760.databaseANDcache.repository.UserRepository;
+import com.taxol760.store.cache.CachedDriverInfo;
+import com.taxol760.store.cache.CacheService;
+import com.taxol760.store.model.driver.DriverModel;
+import com.taxol760.store.model.driver.DriverStatus;
+import com.taxol760.store.model.user.UserModel;
+import com.taxol760.store.model.user.UserRole;
+import com.taxol760.store.model.vehicle.VehicleModel;
+import com.taxol760.store.repository.DriverRepository;
+import com.taxol760.store.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
-import com.taxol760.databaseANDcache.repository.VehicleRepository;
+import com.taxol760.store.repository.VehicleRepository;
 
 import java.util.List;
 
@@ -24,7 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class DriverService {
     private final DriverRepository driverRepository;
     private final UserRepository userRepository;
-    private final cacheservice cacheservice;
+    private final CacheService cacheService;
     private final VehicleRepository vehicleRepository;
 
 
@@ -66,7 +66,7 @@ public class DriverService {
         driver.setStatus(status);
         DriverModel savedDriver = driverRepository.save(driver);
         VehicleModel vehicle = getVehicle(savedDriver);
-        cacheservice.refreshDriverInfo(CachedDriverInfo.from(savedDriver, vehicle));
+        cacheService.refreshDriverInfo(CachedDriverInfo.from(savedDriver, vehicle));
         return savedDriver;
     }
 
@@ -110,28 +110,28 @@ public class DriverService {
     public void goOnline(int id) {
         DriverModel driver = getDriver((long) id);
         VehicleModel vehicle = getVehicle(driver);
-        cacheservice.addDriver(CachedDriverInfo.from(driver, vehicle), 70, 67);
+        cacheService.addDriver(CachedDriverInfo.from(driver, vehicle), 70, 67);
     }
 
     public void goOffline(int id) {
-        cacheservice.delDriver(id);
+        cacheService.delDriver(id);
     }
 
     public void updateLocation(int driverId, double lon, double lat) {
         int id = driverId;
-        CachedDriverInfo driverInfo = cacheservice.getCachedDriverInfo(id);
+        CachedDriverInfo driverInfo = cacheService.getCachedDriverInfo(id);
         if (driverInfo == null) {
             DriverModel driver = getDriver((long) id);
             VehicleModel vehicle = getVehicle(driver);
             driverInfo = CachedDriverInfo.from(driver, vehicle);
         }
 
-        cacheservice.updateDriver(driverInfo, lon, lat);
+        cacheService.updateDriver(driverInfo, lon, lat);
     }
 
     @Transactional(readOnly = true)
     public List<CachedDriverInfo> suggestedDrivers(double lon, double lat) {
-        List<CachedDriverInfo> suggestedDrivers = cacheservice.suggestDrivers(lon, lat);
+        List<CachedDriverInfo> suggestedDrivers = cacheService.suggestDrivers(lon, lat);
         if(suggestedDrivers.isEmpty()){
             throw new EntityNotFoundException("Drivers not found");
         }

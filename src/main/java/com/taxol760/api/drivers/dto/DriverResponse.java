@@ -1,9 +1,9 @@
 package com.taxol760.api.drivers.dto;
 
-import com.taxol760.databaseANDcache.cache.CachedDriverInfo;
-import com.taxol760.databaseANDcache.model.driver.DriverModel;
-import com.taxol760.databaseANDcache.model.driver.DriverStatus;
-import com.taxol760.databaseANDcache.model.vehicle.VehicleModel;
+import com.taxol760.store.cache.CachedDriverInfo;
+import com.taxol760.store.model.driver.DriverModel;
+import com.taxol760.store.model.driver.DriverStatus;
+import com.taxol760.store.model.vehicle.VehicleModel;
 
 public record DriverResponse(
         Long id,

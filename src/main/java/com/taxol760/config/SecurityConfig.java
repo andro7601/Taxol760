@@ -111,7 +111,7 @@ public class SecurityConfig {
 
     @Bean
     public RateLimitingFilter rateLimitingFilter(StringRedisTemplate redisTemplate) {
-        return new RateLimitingFilter(redisTemplate, 60, Duration.ofMinutes(1));
+        return new RateLimitingFilter(redisTemplate, 15, Duration.ofSeconds(10));
     }
 
     @Bean
